@@ -1,0 +1,25 @@
+CREATE DATABASE ijdb;
+
+CREATE TABLE `joke` (
+	`id` INT PRIMARY KEY AUTO_INCREMENT,
+	`text` LONGTEXT NOT NULL,
+	`timestamp` DATETIME DEFAULT CURRENT_TIMESTAMP,
+	`author_id` INT NOT NULL
+);
+
+CREATE TABLE `author` (
+	`id` INT PRIMARY KEY AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL,
+	`email` VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE `category` (
+	`id` INT PRIMARY KEY AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE `joke__category` (
+	`joke_id` INT NOT NULL,
+	`category_id` INT NOT NULL,
+	PRIMARY KEY (`joke_id`, `category_id`)
+);
