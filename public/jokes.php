@@ -4,11 +4,24 @@ try {
 	include __DIR__ . '/../includes/DatabaseConnection.php';
 	include __DIR__ . '/../includes/DatabaseFunctions.php';
 
-	$jokes = allJokes($pdo);
+	$result = findAll($pdo, 'joke');
+	$jokes = [];
+
+	foreach ($result as $joke) {
+		$author = findById($pdo, 'author', 'id', $joke['author_id']);
+
+		$jokes[] = [
+			'id' => $joke['id'],
+			'text' => $joke['text'],
+			'timestamp' => $joke['timestamp'],
+			'name' => $author['name'],
+			'email' => $author['email'],
+		];
+	}
 
 	$title = 'Joke list';
 
-	$totalJokes = totalJokes($pdo);
+	$totalJokes = total($pdo, 'joke');
 
 	ob_start();
 

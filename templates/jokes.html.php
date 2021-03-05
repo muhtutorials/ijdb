@@ -12,7 +12,7 @@
 			$date = new DateTime($joke['timestamp']);
 			echo $date->format('jS F Y');
  			
-		?>) <a href="edit_joke.php?id=<?= $joke['id'] ?>">Edit</a>
+		?>) <a href="joke_form.php?id=<?= $joke['id'] ?>">Edit</a>
 	</p>
 
 	<form action="delete_joke.php" method="post">

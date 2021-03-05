@@ -4,18 +4,24 @@ include __DIR__ . '/../includes/DatabaseConnection.php';
 include __DIR__ . '/../includes/DatabaseFunctions.php';
 
 try {
-	if (isset($_POST['text'])) {
-		updateJoke($pdo, ['id' => $_POST['id'], 'text' => $_POST['text'], 'author_id' => 1]);
+	if (isset($_POST['joke'])) {
+		$joke = $_POST['joke'];
+		$joke['author_id'] = 1;
+
+		save($pdo, 'joke', 'id', $joke);
 
 		header('Location: jokes.php');
 	} else {
-		$joke = getJoke($pdo, $_GET['id']);
-
-		$title = 'Edit joke';
+		if (isset($_GET['id'])) {
+			$joke = findById($pdo, 'joke', 'id', $_GET['id']);
+			$title = 'Edit joke';
+		} else {
+			$title = 'Add a new joke';
+		}
 
 		ob_start();
 
-		include __DIR__ . '/../templates/edit_joke.html.php';
+		include __DIR__ . '/../templates/joke_form.html.php';
 
 		$output = ob_get_clean();
 	}
