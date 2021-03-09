@@ -2,6 +2,8 @@
 
 include_once __DIR__ . '/../includes/DatabaseConnection.php';
 
-include_once __DIR__ . '/../includes/DatabaseFunctions.php';
+include __DIR__ . '/../classes/DatabaseTable.php';
 
-echo totalJokes($pdo);
+$jokesTable = new DatabaseTable($pdo, 'joke', 'id');
+
+echo $jokesTable->total();

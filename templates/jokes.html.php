@@ -12,10 +12,10 @@
 			$date = new DateTime($joke['timestamp']);
 			echo $date->format('jS F Y');
  			
-		?>) <a href="joke_form.php?id=<?= $joke['id'] ?>">Edit</a>
+		?>) <a href="index.php?action=form&id=<?= $joke['id'] ?>">Edit</a>
 	</p>
 
-	<form action="delete_joke.php" method="post">
+	<form action="index.php?action=delete" method="post">
 		<input type="hidden" name="id" value="<?= $joke['id'] ?>">
 		<input type="submit" value="Delete">
 	</form>

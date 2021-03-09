@@ -12,8 +12,8 @@
 		</header>
 		<ul class="navbar">
 			<li><a href="index.php">Home</a></li>
-			<li><a href="jokes.php">Jokes</a></li>
-			<li><a href="joke_form.php">Add a new joke</a></li>
+			<li><a href="index.php?action=list">Jokes</a></li>
+			<li><a href="index.php?action=form">Add a new joke</a></li>
 		</ul>
 	</nav>
 
