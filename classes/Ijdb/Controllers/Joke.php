@@ -1,6 +1,9 @@
 <?php
 
-class JokeController
+namespace Ijdb\Controllers;
+use Core\DatabaseTable;
+
+class Joke
 {
 	private $jokesTable;
 	private $authorsTable;
@@ -44,22 +47,13 @@ class JokeController
 
 	public function form()
 	{
-		if (isset($_POST['joke'])) {
-			$joke = $_POST['joke'];
-			$joke['author_id'] = 1;
-
-			$this->jokesTable->save($joke);
-
-			header('Location: index.php?action=list');
+		if (isset($_GET['id'])) {
+			$joke = $this->jokesTable->findById($_GET['id']);
+			$title = 'Edit joke';
 		} else {
-			if (isset($_GET['id'])) {
-				$joke = $this->jokesTable->findById($_GET['id']);
-				$title = 'Edit joke';
-			} else {
-				$title = 'Add a new joke';
-			}
+			$title = 'Add a new joke';
 		}
-
+		
 		return [
 			'title' => $title,
 			'template' => 'joke_form',
@@ -69,11 +63,21 @@ class JokeController
 		];
 	}
 
+	public function saveForm()
+	{
+		$joke = $_POST['joke'];
+		$joke['author_id'] = 1;
+
+		$this->jokesTable->save($joke);
+
+		header('Location: /joke/list');
+	} 
+
 	public function delete()
 	{
 		$this->jokesTable->delete($_POST['id']);
 
-		header('Location: index.php?action=list');
+		header('Location: /joke/list');
 	}
 
 	public function home()

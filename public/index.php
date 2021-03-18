@@ -1,38 +1,20 @@
 <?php
 
-function loadTemplate($templateName, $variables)
-{
-	extract($variables);
-
-	ob_start();
-
-	include __DIR__ . "/../templates/$templateName.html.php";
-
-	return $output = ob_get_clean();	
-}
+use Core\EntryPoint;
+use Ijdb\Routes;
 
 try {
-	include __DIR__ . '/../includes/DatabaseConnection.php';
-	include __DIR__ . '/../classes/DatabaseTable.php';
-	include __DIR__ . '/../controllers/JokeController.php';
+	include __DIR__ . '/../includes/autoload.php';
 
-	$jokesTable = new DatabaseTable($pdo, 'joke', 'id');
-	$authorsTable = new DatabaseTable($pdo, 'author', 'id');
+	$route = ltrim(strtok($_SERVER['REQUEST_URI'], '?'), '/');
+	$method = $_SERVER['REQUEST_METHOD'];
+	$routes = new Routes();
 
-	$jokeController = new JokeController($jokesTable, $authorsTable);
-
-	$action = $_GET['action'] ?? 'home';
-
-	$page = $jokeController->$action();
-
-	$title = $page['title'];
-
-	$output = loadTemplate($page['template'], $page['variables'] ?? []);
-
-} catch (PDOException $e) {
+	$entryPoint = new EntryPoint($route, $method, $routes);
+	$entryPoint->run();
+} catch (\PDOException $e) {
 		$title = 'An error occured';
 
 		$output = 'Unable to connect to the database server: ' . $e->getMessage() . ' in ' . $e->getFile() . ': ' . $e->getLine();
+		include __DIR__ . '/../templates/layout.html.php';
 }
-
-include __DIR__ . '/../templates/layout.html.php';

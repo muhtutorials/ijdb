@@ -1,11 +1,14 @@
 <?php
 
-class DatabaseTable {
+namespace Core;
+
+class DatabaseTable
+{
 	private $pdo;
 	private $table;
 	private $primaryKey;
 
-	public function __construct(PDO $pdo, string $table, string $primaryKey)
+	public function __construct(\PDO $pdo, string $table, string $primaryKey)
 	{
 		$this->pdo = $pdo;
 		$this->table = $table;
@@ -119,7 +122,7 @@ class DatabaseTable {
 				$fields[$this->primaryKey] = null;
 			}
 			$this->insert($fields);
-		} catch (PDOException $e) {
+		} catch (\PDOException $e) {
 			$this->update($fields);
 		}
 	}
