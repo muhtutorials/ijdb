@@ -37,6 +37,15 @@ class DatabaseTable
 		return $query->fetch();
 	}
 
+	public function find($column, $value)
+	{
+		$params = [":$column" => $value];
+
+		$query = $this->query("SELECT * FROM `$this->table` WHERE `$column` = :$column", $params);
+
+		return $query->fetchAll();
+	}
+
 	public function findAll()
 	{
 		$query = $this->query("SELECT * FROM `$this->table`");

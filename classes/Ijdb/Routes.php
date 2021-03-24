@@ -4,19 +4,33 @@ namespace Ijdb;
 use Ijdb\RoutesInterface;
 use Core\DatabaseTable;
 use Ijdb\Controllers\Joke;
+use Ijdb\Controllers\Register;
+use Ijdb\Controllers\Login;
+use Core\Authentication;
 
 class Routes implements RoutesInterface
 {
-	public function getRoutes()
+	private $jokesTable;
+	private $authorsTable;
+	private $authentication;
+
+	public function __construct()
 	{
 		include __DIR__ . '/../../includes/DatabaseConnection.php';
 
-		$jokesTable = new DatabaseTable($pdo, 'joke', 'id');
-		$authorsTable = new DatabaseTable($pdo, 'author', 'id');
+		$this->jokesTable = new DatabaseTable($pdo, 'joke', 'id');
+		$this->authorsTable = new DatabaseTable($pdo, 'author', 'id');
 
-		$jokeController = new Joke($jokesTable, $authorsTable);
+		$this->authentication = new Authentication($this->authorsTable, 'email', 'password');
+	}
 
-		$routes = [
+	public function getRoutes(): array
+	{
+		$jokeController = new Joke($this->jokesTable, $this->authorsTable, $this->authentication);
+		$authorController = new Register($this->authorsTable);
+		$loginController = new Login($this->authentication);
+
+		$routes = [	
 			'' => [
 				'GET' => [
 					'controller' => $jokeController,
@@ -37,16 +51,68 @@ class Routes implements RoutesInterface
 				'POST' => [
 					'controller' => $jokeController,
 					'action' => 'saveForm'
-				],				
+				],
+				'login' => true			
 			],
 			'joke/delete' => [
 				'POST' => [
 					'controller' => $jokeController,
 					'action' => 'delete'
+				],
+				'login' => true
+			],
+			'author/register' => [
+				'GET' => [
+					'controller' => $authorController,
+					'action' => 'registrationForm'
+				],
+				'POST' => [
+					'controller' => $authorController,
+					'action' => 'registerUser'
 				]
 			],
+			'author/success' => [
+				'GET' => [
+					'controller' => $authorController,
+					'action' => 'success'
+				]
+			],
+			'login' => [
+				'GET' => [
+					'controller' => $loginController,
+					'action' => 'loginForm'
+				],
+				'POST' => [
+					'controller' => $loginController,
+					'action' => 'loginUser'
+				]
+			],
+			'login/success' => [
+				'GET' => [
+					'controller' => $loginController,
+					'action' => 'success'
+				],
+				'login' => true
+			],						
+			'login/required' => [
+				'GET' => [
+					'controller' => $loginController,
+					'action' => 'required'
+				]
+			],
+			'logout' => [
+				'GET' => [
+					'controller' => $loginController,
+					'action' => 'logout'
+				]
+			]
 		];
 
 		return $routes;		
+	}
+
+	public function getAuthentication(): Authentication
+	{
+		return $this->authentication;
 	}
 }

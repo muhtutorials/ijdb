@@ -75,3 +75,16 @@ input[type=submit] {
 input[type=submit]:hover {
 	cursor: pointer;
 }
+
+.errors {
+	padding: 1em;
+	border: 1px solid red;
+	background-color: lightyellow;
+	color: red;
+	margin-bottom: 1em;
+	overflow: auto;
+}
+
+.errors ul {
+	margin-left: 1em;
+}

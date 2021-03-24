@@ -12,13 +12,19 @@
 			$date = new DateTime($joke['timestamp']);
 			echo $date->format('jS F Y');
  			
-		?>) <a href="/joke/form?id=<?= $joke['id'] ?>">Edit</a>
+		?>) 
+<?php if ($user_id === $joke['author_id']): ?> 
+		<a href="/joke/form?id=<?= $joke['id'] ?>">Edit</a>
 	</p>
 
 	<form action="/joke/delete" method="post">
 		<input type="hidden" name="id" value="<?= $joke['id'] ?>">
 		<input type="submit" value="Delete">
 	</form>
+<?php else: ?>
+	</p>
+<?php endif; ?>
+
 </blockquote>
 
 <?php endforeach; ?>
