@@ -1,0 +1,9 @@
+DB backup manual:
+0 - backup files and binary logs should be stored on a hard disk other than the one where MySQL database files are stored. If a hard disk goes bad, both database and backups won't be lost!
+1 - add path to mysql.exe (e.g. C:\xampp\mysql\bin) to PATH environment variable to enable mysql commands in command line.
+2 - use Windows command line or Bash (Powershell creates a file that cannot be read by MySQL server and has other issues when used to run commands) to run "mysqldump -u [username] -p [password (if no password omit "-p")] --databases [DB name] > [path/filename (if path isn't specified file is saved to current working directory)].sql". This command creates DB backup.
+3 - run "mysql -u [username] -p [password] < [path/filename].sql" to restore database.
+4 - navigate to my.ini file using XAMPP MySQL server's config button or open it using Nano editor in Bash. Add "log_bin = D:/web_dev/php/ijdb/mysql_binlogs/binlog.log" after [mysqld] to enable saving of binary logs. Folder "mysql_binlogs" should be created manually or MySQL server will crash. 
+5 - restart MySQL server.
+6 - run "mysqlbinlog binlog.000001 binlog.000002 (etc.) > binlog.sql" to convert binary files to sql file.
+7 - run binlog.sql after running backup file (see step two) to restore DB completely.
