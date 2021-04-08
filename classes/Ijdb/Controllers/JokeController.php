@@ -3,8 +3,9 @@
 namespace Ijdb\Controllers;
 use Core\DatabaseTable;
 use Core\Authentication;
+use Ijdb\Entity\Author;
 
-class Joke
+class JokeController
 {
 	private $jokesTable;
 	private $authorsTable;
@@ -19,21 +20,7 @@ class Joke
 
 	public function list()
 	{
-		$result = $this->jokesTable->findAll();
-		$jokes = [];
-
-		foreach ($result as $joke) {
-			$author = $this->authorsTable->findById($joke['author_id']);
-
-			$jokes[] = [
-				'id' => $joke['id'],
-				'text' => $joke['text'],
-				'timestamp' => $joke['timestamp'],
-				'name' => $author['name'],
-				'email' => $author['email'],
-				'author_id' => $author['id']
-			];
-		}
+		$jokes = $this->jokesTable->findAll();
 
 		$title = 'Joke list';
 
@@ -47,7 +34,7 @@ class Joke
 			'variables' => [
 				'jokes' => $jokes,
 				'totalJokes' => $totalJokes,
-				'user_id' => $user['id'] ?? null
+				'user_id' => $user->id ?? null
 			]
 		];
 	}
@@ -68,25 +55,24 @@ class Joke
 			'template' => 'joke_form',
 			'variables' => [
 				'joke' => $joke ?? null,
-				'user_id' => $user['id'] ?? null
+				'user_id' => $user->id ?? null
 			]
 		];
 	}
 
 	public function saveForm()
 	{
-		$user = $this->authentication->getUser();
+		$author = $this->authentication->getUser(); 
 
 		if (isset($_GET['id'])) {
 			$joke = $this->jokesTable->findById($_GET['id']);
 
-			if ($user['id'] !== $joke['author_id']) return;
+			if ($author->id !== $joke->author_id) return;
 		}
 
 		$joke = $_POST['joke'];
-		$joke['author_id'] = $user['id'];
-
-		$this->jokesTable->save($joke);
+		
+		$author->addJoke($joke);
 
 		header('Location: /joke/list');
 	} 
@@ -96,9 +82,9 @@ class Joke
 		$user = $this->authentication->getUser();
 
 		$joke = $this->jokesTable->findById($_POST['id']);
+		echo $joke->id;
+		if ($user->id !== $joke->author_id) return;
 
-		if ($user['id'] !== $joke['author_id']) return;
-		
 		$this->jokesTable->delete($_POST['id']);
 
 		header('Location: /joke/list');

@@ -1,10 +1,9 @@
 <?php
 
 namespace Ijdb\Controllers;
-
 use Core\DatabaseTable;
 
-class Register
+class RegisterController
 {
 	private $authorsTable;
 	

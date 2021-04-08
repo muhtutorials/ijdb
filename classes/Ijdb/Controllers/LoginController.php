@@ -3,7 +3,7 @@
 namespace Ijdb\Controllers;
 use Core\Authentication;
 
-class Login
+class LoginController
 {
 	private $authentication;
 

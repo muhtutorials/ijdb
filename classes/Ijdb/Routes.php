@@ -3,10 +3,12 @@
 namespace Ijdb;
 use Ijdb\RoutesInterface;
 use Core\DatabaseTable;
-use Ijdb\Controllers\Joke;
-use Ijdb\Controllers\Register;
-use Ijdb\Controllers\Login;
+use Ijdb\Controllers\JokeController;
+use Ijdb\Controllers\RegisterController;
+use Ijdb\Controllers\LoginController;
 use Core\Authentication;
+use Ijdb\Entity\Joke;
+use Ijdb\Entity\Author;
 
 class Routes implements RoutesInterface
 {
@@ -18,17 +20,17 @@ class Routes implements RoutesInterface
 	{
 		include __DIR__ . '/../../includes/DatabaseConnection.php';
 
-		$this->jokesTable = new DatabaseTable($pdo, 'joke', 'id');
-		$this->authorsTable = new DatabaseTable($pdo, 'author', 'id');
+		$this->jokesTable = new DatabaseTable($pdo, 'joke', 'id', Joke::class, [&$this->authorsTable]);
+		$this->authorsTable = new DatabaseTable($pdo, 'author', 'id', Author::class, [&$this->jokesTable]);
 
 		$this->authentication = new Authentication($this->authorsTable, 'email', 'password');
 	}
 
 	public function getRoutes(): array
 	{
-		$jokeController = new Joke($this->jokesTable, $this->authorsTable, $this->authentication);
-		$authorController = new Register($this->authorsTable);
-		$loginController = new Login($this->authentication);
+		$jokeController = new JokeController($this->jokesTable, $this->authorsTable, $this->authentication);
+		$authorController = new RegisterController($this->authorsTable);
+		$loginController = new LoginController($this->authentication);
 
 		$routes = [	
 			'' => [

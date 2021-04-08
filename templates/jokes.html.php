@@ -4,21 +4,21 @@
 
 <blockquote>
 	<p>
-		<?= htmlspecialchars($joke['text'], ENT_QUOTES, 'UTF-8') ?>
+		<?= htmlspecialchars($joke->text, ENT_QUOTES, 'UTF-8') ?>
 
-		(by <a href="mailto:<?= htmlspecialchars($joke['email'], ENT_QUOTES, 'UTF-8') ?>
-"><?= htmlspecialchars($joke['name'], ENT_QUOTES, 'UTF-8') ?>
+		(by <a href="mailto:<?= htmlspecialchars($joke->getAuthor()->email, ENT_QUOTES, 'UTF-8') ?>
+"><?= htmlspecialchars($joke->getAuthor()->name, ENT_QUOTES, 'UTF-8') ?>
 </a> on <?php
-			$date = new DateTime($joke['timestamp']);
+			$date = new DateTime($joke->timestamp);
 			echo $date->format('jS F Y');
  			
 		?>) 
-<?php if ($user_id === $joke['author_id']): ?> 
-		<a href="/joke/form?id=<?= $joke['id'] ?>">Edit</a>
+<?php if ($user_id === $joke->author_id): ?> 
+		<a href="/joke/form?id=<?= $joke->id ?>">Edit</a>
 	</p>
 
 	<form action="/joke/delete" method="post">
-		<input type="hidden" name="id" value="<?= $joke['id'] ?>">
+		<input type="hidden" name="id" value="<?= $joke->id ?>">
 		<input type="submit" value="Delete">
 	</form>
 <?php else: ?>
