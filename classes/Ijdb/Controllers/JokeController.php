@@ -9,18 +9,27 @@ class JokeController
 {
 	private $jokesTable;
 	private $authorsTable;
+	private $categoriesTable;
 	private $authentication;
 	
-	public function __construct(DatabaseTable $jokesTable, DatabaseTable $authorsTable, Authentication $authentication)
+	public function __construct(DatabaseTable $jokesTable, DatabaseTable $authorsTable, DatabaseTable $categoriesTable, Authentication $authentication)
 	{
 		$this->jokesTable = $jokesTable;
 		$this->authorsTable = $authorsTable;
+		$this->categoriesTable = $categoriesTable;
 		$this->authentication = $authentication;
 	}
 
 	public function list()
 	{
-		$jokes = $this->jokesTable->findAll();
+		if (isset($_GET['category'])) {
+			$category = $this->categoriesTable->findById($_GET['category']);
+
+			$jokes = $category->getJokes();
+		} else {
+			$jokes = $this->jokesTable->findAll();
+		}
+		
 
 		$title = 'Joke list';
 
@@ -34,7 +43,8 @@ class JokeController
 			'variables' => [
 				'jokes' => $jokes,
 				'totalJokes' => $totalJokes,
-				'user_id' => $user->id ?? null
+				'user_id' => $user->id ?? null,
+				'categories' => $this->categoriesTable->findAll()
 			]
 		];
 	}
@@ -42,6 +52,7 @@ class JokeController
 	public function form()
 	{
 		$user = $this->authentication->getUser();
+		$categories = $this->categoriesTable->findAll();
 
 		if (isset($_GET['id'])) {
 			$joke = $this->jokesTable->findById($_GET['id']);
@@ -55,7 +66,8 @@ class JokeController
 			'template' => 'joke_form',
 			'variables' => [
 				'joke' => $joke ?? null,
-				'user_id' => $user->id ?? null
+				'user_id' => $user->id ?? null,
+				'categories' => $categories
 			]
 		];
 	}
@@ -71,8 +83,14 @@ class JokeController
 		}
 
 		$joke = $_POST['joke'];
+		$categories = $_POST['categories'];
 		
-		$author->addJoke($joke);
+		$jokeEntity = $author->addJoke($joke);
+		$jokeEntity->clearCategories();
+
+		foreach ($categories as $categoryId) {
+			$jokeEntity->addCategory($categoryId);
+		}
 
 		header('Location: /joke/list');
 	} 
@@ -82,7 +100,7 @@ class JokeController
 		$user = $this->authentication->getUser();
 
 		$joke = $this->jokesTable->findById($_POST['id']);
-		echo $joke->id;
+		
 		if ($user->id !== $joke->author_id) return;
 
 		$this->jokesTable->delete($_POST['id']);

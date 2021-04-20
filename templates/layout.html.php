@@ -26,8 +26,8 @@
 		<?= $output ?>
 	</main>
 
-	<footer>
+<!-- 	<footer>
 		&copy; IJDB 2021
-	</footer>
+	</footer> -->
 </body>
 </html>

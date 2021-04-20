@@ -10,6 +10,20 @@
 			cols="40"
 			placeholder="Type your joke here..."
 		><?= $joke->text ?? '' ?></textarea>
+
+		<p>Select categories for this joke</p>
+
+		<?php foreach ($categories as $category): ?>
+			<div>
+				<?php if ($joke && $joke->hasCategory($category->id)): ?>
+					<input type="checkbox" name="categories[]" value="<?= $category->id ?>" checked />
+				<?php else: ?>
+					<input type="checkbox" name="categories[]" value="<?= $category->id ?>" />
+				<?php endif; ?>
+				<label><?= $category->name ?></label>					
+			</div>
+		<?php endforeach; ?>
+
 		<input type="submit" name="submit" value="Save">
 	</form>
 <?php else: ?>

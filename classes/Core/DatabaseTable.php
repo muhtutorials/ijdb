@@ -101,6 +101,8 @@ class DatabaseTable
 		$sql .= ')';
 
 		$this->query($sql, $fields);
+
+		return $this->pdo->lastInsertId();
 	}
 
 	private function update($fields)
@@ -127,8 +129,17 @@ class DatabaseTable
 		$query = $this->query("DELETE FROM `$this->table` WHERE `$this->primaryKey` = :id", $params);
 	}
 
+	public function deleteWhere($column, $value)
+	{
+		$params = [":$column" => $value];
+
+		$query = $this->query("DELETE FROM `$this->table` WHERE `$column` = :$column", $params);		
+	}
+
 	public function save($fields)
 	{
+		$entity = new $this->className(...$this->constructorArgs);
+
 		try {
 			if ($fields[$this->primaryKey] == '') {
 				// if primary key isn't equal to an empty string but to an existing value
@@ -140,9 +151,19 @@ class DatabaseTable
 				// and creates a new record
 				$fields[$this->primaryKey] = null;
 			}
-			$this->insert($fields);
+
+			$insertId = $this->insert($fields);
+
+			$entity->{$this->primaryKey} = $insertId;
 		} catch (\PDOException $e) {
 			$this->update($fields);
 		}
+
+		foreach ($fields as $key => $value) {
+			// if statement prevents primary key being overwritten with null
+			if (!empty($value)) $entity->$key = $value;
+		}
+
+		return $entity;
 	}
 }
