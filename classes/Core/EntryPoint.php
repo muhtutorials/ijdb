@@ -44,6 +44,8 @@ class EntryPoint
 
 		if (isset($routes[$this->route]['login']) && !$authentication->isLoggedIn()) {
 			header('Location: /login/required');
+		} elseif (isset($routes[$this->route]['permissions']) && !$this->routes->checkPermission($routes[$this->route]['permissions'])) {
+			header('Location: /login/required');
 		} else {
 			$controller = $routes[$this->route][$this->method]['controller'];
 			$action = $routes[$this->route][$this->method]['action'];
@@ -55,7 +57,7 @@ class EntryPoint
 			$output = $this->loadTemplate($page['template'], $page['variables'] ?? []);
 
 			echo $this->loadTemplate('layout', [
-				'loggedIn' => $authentication->isLoggedIn(),
+				'user' => $authentication,
 				'title' => $title,
 				'output' => $output
 			]);;			

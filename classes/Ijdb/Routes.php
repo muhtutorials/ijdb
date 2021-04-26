@@ -86,12 +86,33 @@ class Routes implements RoutesInterface
 					'action' => 'success'
 				]
 			],
+			'author/list' => [
+				'GET' => [
+					'controller' => $authorController,
+					'action' => 'list'
+				],
+				'login' => true,
+				'permissions' => Author::EDIT_USER_ACCESS
+			],
+			'author/permissions' => [
+				'GET' => [
+					'controller' => $authorController,
+					'action' => 'permissions'
+				],
+				'POST' => [
+					'controller' => $authorController,
+					'action' => 'savePermissions'
+				],
+				'login' => true,
+				'permissions' => Author::EDIT_USER_ACCESS		
+			],
 			'category/list' => [
 				'GET' => [
 					'controller' => $categoryController,
 					'action' => 'list'
 				],
-				'login' => true
+				'login' => true,
+				'permissions' => Author::LIST_CATEGORIES
 			],
 			'category/form' => [
 				'GET' => [
@@ -102,14 +123,17 @@ class Routes implements RoutesInterface
 					'controller' => $categoryController,
 					'action' => 'saveForm'
 				],
-				'login' => true			
+				'login' => true,
+				'permissions' => Author::EDIT_CATEGORIES
+		
 			],
 			'category/delete' => [
 				'POST' => [
 					'controller' => $categoryController,
 					'action' => 'delete'
 				],
-				'login' => true
+				'login' => true,
+				'permissions' => Author::DELETE_CATEGORIES
 			],
 			'login' => [
 				'GET' => [
@@ -148,5 +172,12 @@ class Routes implements RoutesInterface
 	public function getAuthentication(): Authentication
 	{
 		return $this->authentication;
+	}
+
+	public function checkPermission($permission): bool
+	{
+		$user = $this->authentication->getUser();
+		
+		return $user && $user->hasPermission($permission);
 	}
 }

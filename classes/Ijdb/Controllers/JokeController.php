@@ -43,7 +43,7 @@ class JokeController
 			'variables' => [
 				'jokes' => $jokes,
 				'totalJokes' => $totalJokes,
-				'user_id' => $user->id ?? null,
+				'user' => $user ?? null,
 				'categories' => $this->categoriesTable->findAll()
 			]
 		];
@@ -66,7 +66,7 @@ class JokeController
 			'template' => 'joke_form',
 			'variables' => [
 				'joke' => $joke ?? null,
-				'user_id' => $user->id ?? null,
+				'user' => $user ?? null,
 				'categories' => $categories
 			]
 		];
@@ -101,7 +101,7 @@ class JokeController
 
 		$joke = $this->jokesTable->findById($_POST['id']);
 		
-		if ($user->id !== $joke->author_id) return;
+		if ($user->id !== $joke->author_id && !$user->hasPermission(Author::DELETE_JOKES)) return;
 
 		$this->jokesTable->delete($_POST['id']);
 

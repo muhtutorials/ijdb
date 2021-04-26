@@ -23,6 +23,7 @@ header {
 
 .navbar {
 	font-size: 1.2rem;
+	color: white;
 	display: flex;
 	justify-content: space-around;
 	padding: 0.8rem;
@@ -108,6 +109,11 @@ input[type=submit]:hover {
 .categories a {
 	color: white;
 	text-decoration: none;
+}
+
+.categories-edit {
+	margin-bottom: 2rem;
+	text-transform: uppercase;
 }
 
 .joke-list .jokes {

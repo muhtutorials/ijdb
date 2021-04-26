@@ -1,6 +1,9 @@
 <div class="joke-list">
 
 	<ul class="categories">
+		<?php if ($user && $user->hasPermission(\Ijdb\Entity\Author::LIST_CATEGORIES)): ?>
+			<li class="categories-edit"><a href="/category/list">Edit categories</a></li>
+		<?php endif; ?>
 		<?php foreach ($categories as $category): ?>
 			<li><a href="/joke/list?category=<?= $category->id ?>"><?= $category->name ?></a></li>
 		<?php endforeach; ?>
@@ -11,30 +14,31 @@
 
 		<?php foreach ($jokes as $joke): ?>
 
-		<blockquote>
-			<p>
-				<?= htmlspecialchars($joke->text, ENT_QUOTES, 'UTF-8') ?>
+			<blockquote>
+				<div>
+					<?= htmlspecialchars($joke->text, ENT_QUOTES, 'UTF-8') ?>
+					(by <a href="mailto:<?= htmlspecialchars($joke->getAuthor()->email, ENT_QUOTES, 'UTF-8') ?>"
+						><?= htmlspecialchars($joke->getAuthor()->name, ENT_QUOTES, 'UTF-8') ?>
+						</a> on <?php
+									$date = new DateTime($joke->timestamp);
+									echo $date->format('jS F Y');
+								?>) 
+				<?php if ($user): ?>
+					<?php if ($user->id === $joke->author_id || $user->hasPermission(\Ijdb\Entity\Author::EDIT_JOKES)): ?>
+						<a href="/joke/form?id=<?= $joke->id ?>">Edit</a>
+					<?php endif; ?>
+				</div>
 
-				(by <a href="mailto:<?= htmlspecialchars($joke->getAuthor()->email, ENT_QUOTES, 'UTF-8') ?>
-		"><?= htmlspecialchars($joke->getAuthor()->name, ENT_QUOTES, 'UTF-8') ?>
-		</a> on <?php
-					$date = new DateTime($joke->timestamp);
-					echo $date->format('jS F Y');
-		 			
-				?>) 
-		<?php if ($user_id === $joke->author_id): ?> 
-				<a href="/joke/form?id=<?= $joke->id ?>">Edit</a>
-			</p>
-
-			<form action="/joke/delete" method="post">
-				<input type="hidden" name="id" value="<?= $joke->id ?>">
-				<input type="submit" value="Delete">
-			</form>
-		<?php else: ?>
-			</p>
-		<?php endif; ?>
-
-		</blockquote>
+					<?php if ($user->id === $joke->author_id || $user->hasPermission(\Ijdb\Entity\Author::DELETE_JOKES)): ?>
+						<form action="/joke/delete" method="post">
+							<input type="hidden" name="id" value="<?= $joke->id ?>">
+							<input type="submit" value="Delete">
+						</form>
+					<?php endif; ?>
+				<?php else: ?>
+				</div>
+				<?php endif; ?>
+			</blockquote>
 
 		<?php endforeach; ?>		
 	</div>

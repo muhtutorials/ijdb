@@ -7,4 +7,5 @@ interface RoutesInterface
 {
 	public function getRoutes(): array;
 	public function getAuthentication(): Authentication;
+	public function checkPermission($perm): bool;
 }

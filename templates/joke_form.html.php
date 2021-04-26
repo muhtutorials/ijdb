@@ -1,6 +1,6 @@
 <h2><?= isset($_GET['id']) ? 'Edit your joke' : 'Add a new joke' ?></h2>
 
-<?php if (!isset($_GET['id']) || $user_id === $joke->author_id): ?>
+<?php if (empty($joke->id) || $user->id === $joke->author_id || $user->hasPermission(\Ijdb\Entity\Author::EDIT_JOKES)): ?>
 	<form method="post">
 		<input type="hidden" name="joke[id]" value="<?= $joke->id ?? '' ?>">
 		<textarea

@@ -2,6 +2,7 @@
 
 namespace Ijdb\Controllers;
 use Core\DatabaseTable;
+use Ijdb\Entity\Author;
 
 class RegisterController
 {
@@ -68,5 +69,46 @@ class RegisterController
 				]
 			];
 		}
+	}
+
+	public function list()
+	{
+		$authors = $this->authorsTable->findAll();
+
+		return [
+			'title' => 'Author list',
+			'template' => 'author_list',
+			'variables' => ['authors' => $authors]
+		];
+	}
+
+	public function permissions()
+	{
+		$author = $this->authorsTable->findById($_GET['id']);
+		$reflected = new \ReflectionClass(Author::class);
+		// get Author's class constants
+		$constants = $reflected->getConstants();
+
+		return [
+			'title' => 'Edit Permissions',
+			'template' => 'permissions',
+			'variables' => [
+				'author' => $author,
+				'permissions' => $constants
+			]
+		];
+	}
+
+	public function savePermissions()
+	{
+		$author = [
+			'id' => $_GET['id'],
+			// get sum of permissions values to store in DB
+			'permissions' => array_sum($_POST['permissions']) ?? []
+		];
+
+		$this->authorsTable->save($author);
+
+		header('Location: /author/list');
 	}
 }
