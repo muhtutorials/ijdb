@@ -16,7 +16,7 @@
 
 			<blockquote>
 				<div>
-					<?= htmlspecialchars($joke->text, ENT_QUOTES, 'UTF-8') ?>
+					<?= (new \Core\Markdown($joke->text))->toHtml() ?>
 					(by <a href="mailto:<?= htmlspecialchars($joke->getAuthor()->email, ENT_QUOTES, 'UTF-8') ?>"
 						><?= htmlspecialchars($joke->getAuthor()->name, ENT_QUOTES, 'UTF-8') ?>
 						</a> on <?php
@@ -40,7 +40,6 @@
 				<?php endif; ?>
 			</blockquote>
 
-		<?php endforeach; ?>		
+		<?php endforeach; ?>
 	</div>
 </div>
-

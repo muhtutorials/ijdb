@@ -35,7 +35,9 @@ class JokeController
 
 		$totalJokes = $this->jokesTable->total();
 
-		$user = $this->authentication->getUser();
+		$user = $this->authentication->getUser() ?? null;
+
+		$categories = $this->categoriesTable->findAll();
 
 		return [
 			'title' => $title,
@@ -43,8 +45,8 @@ class JokeController
 			'variables' => [
 				'jokes' => $jokes,
 				'totalJokes' => $totalJokes,
-				'user' => $user ?? null,
-				'categories' => $this->categoriesTable->findAll()
+				'user' => $user,
+				'categories' => $categories
 			]
 		];
 	}
@@ -79,7 +81,7 @@ class JokeController
 		if (isset($_GET['id'])) {
 			$joke = $this->jokesTable->findById($_GET['id']);
 
-			if ($author->id !== $joke->author_id) return;
+			if ($author->id !== $joke->author_id && !$author->hasPermission(Author::EDIT_JOKES)) return;
 		}
 
 		$joke = $_POST['joke'];
