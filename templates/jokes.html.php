@@ -41,5 +41,15 @@
 			</blockquote>
 
 		<?php endforeach; ?>
+
+		<p>Select page:</p>
+
+		<?php
+			$numPages = ceil($totalJokes / 10);
+
+			for ($i = 1; $i <= $numPages; $i++):	
+		?>
+			<a href="/joke/list?page=<?= $i ?><?= $categoryId ? "&category=$categoryId" : '' ?>" class="<?= $i == $currentPage ? 'current' : '' ?>"><?= $i ?></a>
+		<?php endfor; ?>
 	</div>
 </div>

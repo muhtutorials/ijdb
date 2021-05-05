@@ -22,18 +22,23 @@ class JokeController
 
 	public function list()
 	{
+		$page = $_GET['page'] ?? 1;
+
+		$offset = ($page - 1) * 10;
+
 		if (isset($_GET['category'])) {
 			$category = $this->categoriesTable->findById($_GET['category']);
 
-			$jokes = $category->getJokes();
+			$jokes = $category->getJokes(10, $offset);
+
+			$totalJokes = $category->getNumJokes();
 		} else {
-			$jokes = $this->jokesTable->findAll();
+			$jokes = $this->jokesTable->findAll('timestamp DESC', 10, $offset);
+
+			$totalJokes = $this->jokesTable->total();
 		}
 		
-
 		$title = 'Joke list';
-
-		$totalJokes = $this->jokesTable->total();
 
 		$user = $this->authentication->getUser() ?? null;
 
@@ -46,7 +51,9 @@ class JokeController
 				'jokes' => $jokes,
 				'totalJokes' => $totalJokes,
 				'user' => $user,
-				'categories' => $categories
+				'categories' => $categories,
+				'currentPage' => $page,
+				'categoryId' => $_GET['category'] ?? null
 			]
 		];
 	}

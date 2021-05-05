@@ -47,25 +47,61 @@ class DatabaseTable
 		return $query->fetchObject($this->className, $this->constructorArgs);
 	}
 
-	public function find($column, $value)
+	public function find($column, $value, $order_by = null, $limit = null, $offset = null)
 	{
+		$sql = "SELECT * FROM `$this->table` WHERE `$column` = :$column";
+		
+		if ($order_by) {
+			$sql .= " ORDER BY $order_by";
+		}
+
+		if ($limit) {
+			$sql .= " LIMIT $limit";
+		}
+
+		if ($offset) {
+			$sql .= " OFFSET $offset";
+		}
+
 		$params = [":$column" => $value];
 
-		$query = $this->query("SELECT * FROM `$this->table` WHERE `$column` = :$column", $params);
+		$query = $this->query($sql, $params);
 
 		return $query->fetchAll(\PDO::FETCH_CLASS, $this->className, $this->constructorArgs);
 	}
 
-	public function findAll()
+	public function findAll($order_by = null, $limit = null, $offset = null)
 	{
-		$query = $this->query("SELECT * FROM `$this->table`");
+		$sql = "SELECT * FROM `$this->table`";
+		
+		if ($order_by) {
+			$sql .= " ORDER BY $order_by";
+		}
+
+		if ($limit) {
+			$sql .= " LIMIT $limit";
+		}
+
+		if ($offset) {
+			$sql .= " OFFSET $offset";
+		}
+		
+		$query = $this->query($sql);
 
 		return $query->fetchAll(\PDO::FETCH_CLASS, $this->className, $this->constructorArgs);
 	}
 
-	public function total()
+	public function total($column = null, $value = null)
 	{
-		$query = $this->query("SELECT COUNT(*) FROM `$this->table`");
+		$sql = "SELECT COUNT(*) FROM `$this->table`";
+
+		if ($column) {
+			$sql .= " WHERE $column=:$column";
+		}
+
+		$params = [":$column" => $value];
+
+		$query = $this->query($sql, $params);
 
 		$row = $query->fetch();
 

@@ -120,3 +120,15 @@ input[type=submit]:hover {
 	display: table-cell;
 	padding: 1em;
 }
+
+.current {
+	color: red;
+}
+
+.current:before {
+	content: "[";
+}
+
+.current:after {
+	content: "]";
+}
